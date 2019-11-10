@@ -1,0 +1,244 @@
+
+	AREA	main_s,code
+	
+	EXPORT  main
+
+	INCLUDE LPC1778_REG_ASM.s		
+		
+main
+
+		LDR r3, =LPC_GPIO0_DIR
+		MOV r4, #0x00FF00
+		STR r4, [r3]
+		
+		; LDR r0, =LPC_GPIO0_DIR		
+		; MOV r1, #0xFF00				
+		; STR r1, [r0]				
+		
+pollme
+		LDR r3, =LPC_GPIO0_PIN
+		LDR r4, [r3]
+		AND r4, r4, #0xFF00000
+		CMP r4, #0x010000
+		
+		BNE pollme
+
+		LDR r0, =LPC_GPIO0_SET
+		MOV r1, #0x100
+		STR r1, [r0]
+		
+		B pollme
+		
+schleife
+
+		LDR r0, =LPC_GPIO0_SET		
+		MOV r1, #0x100				
+		STR r1, [r0]				
+		
+		LDR r2, =100000				
+warte1		
+		SUB r2, r2, #1				
+		CMP r2, #0					
+		BNE warte1					
+		
+		LDR r0, =LPC_GPIO0_CLR		
+		MOV r1, #0x100				
+		STR r1, [r0]				
+		
+		LDR r0, =LPC_GPIO0_SET		
+		MOV r1, #0x200				
+		STR r1, [r0]				
+		
+		LDR r2, =100000			
+warte2		
+		SUB r2, r2, #1				
+		CMP r2, #0					
+		BNE warte2					
+		
+		LDR r0, =LPC_GPIO0_CLR		
+		MOV r1, #0x200				
+		STR r1, [r0]				
+		
+		LDR r0, =LPC_GPIO0_SET
+		MOV r1, #0x400
+		STR r1, [r0]
+		
+		LDR r2, =100000
+warte3		
+		SUB r2, r2, #1
+		CMP r2, #0
+		BNE warte3
+		
+		LDR r0, =LPC_GPIO0_CLR
+		MOV r1, #0x400
+		STR r1, [r0]
+		
+		LDR r0, =LPC_GPIO0_SET
+		MOV r1, #0x800
+		STR r1, [r0]
+		
+		LDR r2, =100000
+warte4
+		SUB r2, r2, #1
+		CMP r2, #0
+		BNE warte4
+		
+		LDR r0, =LPC_GPIO0_CLR
+		MOV r1, #0x800
+		STR r1, [r0]
+		
+		LDR r0, =LPC_GPIO0_SET
+		MOV r1, #0x1000
+		STR r1, [r0]
+		
+		LDR r2, =100000
+warte5
+		SUB r2, r2, #1
+		CMP r2, #0
+		BNE warte5
+		
+		LDR r0, =LPC_GPIO0_CLR
+		MOV r1, #0x1000
+		STR r1, [r0]
+		
+		LDR r0, =LPC_GPIO0_SET
+		MOV r1, #0x2000
+		STR r1, [r0]
+		
+		LDR r2, =100000
+warte6
+		SUB r2, r2, #1
+		CMP r2, #0
+		BNE warte6
+		
+		LDR r0, =LPC_GPIO0_CLR
+		MOV r1, #0x2000
+		STR r1, [r0]
+		
+		LDR r0, =LPC_GPIO0_SET
+		MOV r1, #0x4000
+		STR r1, [r0]
+		
+		LDR r2, =100000
+warte7
+		SUB r2, r2, #1
+		CMP r2, #0
+		BNE warte7
+		
+		LDR r0, =LPC_GPIO0_CLR
+		MOV r1, #0x4000
+		STR r1, [r0]
+		
+		LDR r0, =LPC_GPIO0_SET
+		MOV r1, #0x8000
+		STR r1, [r0]
+		
+		LDR r2, =100000
+warte8
+		SUB r2, r2, #1
+		CMP r2, #0
+		BNE warte8
+		
+		LDR r0, =LPC_GPIO0_CLR
+		MOV r1, #0x8000
+		STR r1, [r0]
+		
+		LDR r0, =LPC_GPIO0_SET
+		MOV r1, #0x4000
+		STR r1, [r0]
+		
+		LDR r2, =100000
+		
+warte7r
+		SUB r2, r2, #1
+		CMP r2, #0
+		BNE warte7r
+		
+		LDR r0, =LPC_GPIO0_CLR
+		MOV r1, #0x4000
+		STR r1, [r0]
+		
+		LDR r0, =LPC_GPIO0_SET
+		MOV r1, #0x2000
+		STR r1, [r0]
+		
+		LDR r2, =100000
+		
+warte6r
+		SUB r2, r2, #1
+		CMP r2, #0
+		BNE warte6r
+		
+		LDR r0, =LPC_GPIO0_CLR
+		MOV r1, #0x2000
+		STR r1, [r0]
+		
+		LDR r0, =LPC_GPIO0_SET
+		MOV r1, #0x1000
+		STR r1, [r0]
+		
+		LDR r2, =100000
+
+warte5r
+		SUB r2, r2, #1
+		CMP r2, #0
+		BNE warte5r
+		
+		LDR r0, =LPC_GPIO0_CLR
+		MOV r1, #0x1000
+		STR r1, [r0]
+		
+		LDR r0, =LPC_GPIO0_SET
+		MOV r1, #0x800
+		STR r1, [r0]
+		
+		LDR r2, =100000
+
+warte4r
+		SUB r2, r2, #1
+		CMP r2, #0
+		BNE warte4r
+		
+		LDR r0, =LPC_GPIO0_CLR
+		MOV r1, #0x800
+		STR r1, [r0]
+		
+		LDR r0, =LPC_GPIO0_SET
+		MOV r1, #0x400
+		STR r1, [r0]
+		
+		LDR r2, =100000
+
+warte3r		
+		SUB r2, r2, #1
+		CMP r2, #0
+		BNE warte3r
+		
+		LDR r0, =LPC_GPIO0_CLR
+		MOV r1, #0x400
+		STR r1, [r0]
+		
+		LDR r0, =LPC_GPIO0_SET
+		MOV r1, #0x200
+		STR r1, [r0]
+		
+		LDR r2, =100000
+		
+warte2r		
+		SUB r2, r2, #1				
+		CMP r2, #0					
+		BNE warte2r					
+		
+		LDR r0, =LPC_GPIO0_CLR		
+		MOV r1, #0x200				
+		STR r1, [r0]				
+		
+		LDR r0, =LPC_GPIO0_SET
+		MOV r1, #0x100
+		STR r1, [r0]
+		
+		LDR r2, =100000
+		
+stop					
+					
+		end
