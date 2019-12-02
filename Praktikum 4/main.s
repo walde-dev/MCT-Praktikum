@@ -5,72 +5,115 @@
 
 	INCLUDE LPC1778_REG_ASM.s		
 		
-LED_DELAY		equ	(0x3E8)
-;LED_DELAY		equ	(0x1)
-		
-
+LED_DELAY		equ	(0xE3E8FF)
+;LED_DELAY		equ	(0x2)
 
 main	
-		
 
 		LDR r0, =LPC_GPIO0_DIR
 		MOV r1, #0x00FF00
 		STR r1, [r0]
 		
-
+		MOV r7, #0x0
+	
+pollme
+		
+		LDR r3, =LPC_GPIO0_PIN
+		LDR r4, [r3]
+		AND r4, r4, #0xFF0000
+		
+		CMP r4, #0xFE0000  ;Starttaste
+		BEQ Stoppuhrstart
+		
+		CMP r4, #0xFD0000
+		;BEQ Stoppuhrstop   ;Stoptaste
+		
+		CMP r4, #0xFC0000
+		;BEQ Stoppuhrreset  ;Resettaste
+		
+		BNE pollme
 		
 		
-		LDR r1, =LPC_GPIO0_SET		
-		MOV r2, #0x600				
-		STR r2, [r1]
+Stoppuhrstart
+		MOV r0, #0x0
+		MOV r1, #0x0
+loop
+		BL zahlAusgeben
+		CMP r0, #0x9
+		BEQ neueZehn
+		ADD r0, r0, #0x1
+		B loop
 		
-		LDR r0, =LED_DELAY		
-		BL warte
-		
-		LDR r1, =LPC_GPIO0_CLR		
-		MOV r2, #0x600		
-		STR r2, [r1]
-		
-		LDR r0, =LED_DELAY
-		BL warte
-		
-		
-		MOV r0, #0x4
+neueZehn	
+		ADD r7, r7, #0x1
+		MOV r0, r7
 		MOV r1, #0x1
 		BL zahlAusgeben
 		
-		B main
+		
+		B Stoppuhrstart
+		
 
 
+		
 zahlAusgeben
+
+		PUSH {LR}
+		LDR r2, =werte
+		LDR r3, [r2, r0, LSL #2]
+		
 		CMP r1, #0x0
-		
+		BEQ linksAusgeben
+		CMP r1, #0x1
+		BEQ rechtsAusgeben
 
-		CMP r0, #0x0
-		BEQ zahlNullAusgeben
+zahlSetzen
 		
-		CMP r0, #0x1
-		BEQ zahlEinsAusgeben
+		LDR r4, =LPC_GPIO0_SET	
+		LSL r3, r3, #8
+		MOV r5, r3				
+		STR r5, [r4]
 		
+		PUSH{r0}
+		LDR r0, =LED_DELAY
+		BL warteschleife
 		
-zahlNullAusgeben
-		LDR r2, =LPC_GPIO0_SET		
-		MOV r3, #0x600				
-		STR r3, [r2]
+		LDR r4, =LPC_GPIO0_CLR		
+		MOV r5, r3		
+		STR r5, [r4]
+		
+		LDR r0, =LED_DELAY
+		
+		BL warteschleife
+		POP {r0}
+		POP {LR}
+		
+		BX LR
 
-
-
+linksAusgeben
+		LDR r6, =0x7F
+		AND r3, r3, r6
+		B zahlSetzen
+		
+rechtsAusgeben
+		LDR r6, =0x80
+		ORR r3, r3, r6
+		B zahlSetzen
 warte
 		LDR r1, =0x1770
+		;LDR r1, =0x1
 		MUL r0, r0, r1
+
 warteschleife		
+
 		SUB r0, r0, #0x1
 		CMP r0, #0x0
 		BNE warteschleife
 		BX LR
-	
+
+werte 	DCD 63, 6, 91, 79, 102, 109, 125, 7, 127, 103
 		
 stop		
 					
 		end
-		
+
